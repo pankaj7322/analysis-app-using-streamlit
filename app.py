@@ -7,15 +7,20 @@ warnings.filterwarnings('ignore')
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 st.set_option('deprecation.showPyplotGlobalUse', False)
 st.title("Data Analysis")
+st.sidebar.header("Visualisation Selector")
+st.sidebar.text("Select the Charts/Plots accordingly:")
+
 uploaded_file = st.file_uploader("Choose a file")
-st.sidebar.header('Section 1')
-st.sidebar.write('This is the first section in the sidebar.')
-global options
+global options,cat_col, num_col
 options = []
+cat_col = []
+num_col = []
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     columns = df.columns.tolist()
     options = columns
+    cat_col = df.select_dtypes(include = ['object','category'])
+    num_col = df.select_dtypes(exclude = ['object', 'category'])
     st.write(df.head())
 
 
@@ -26,11 +31,14 @@ def main(selected_option1,selected_option2, selected_option3):
     st.pyplot()
 
 
-st.text('Data Visualisation')
+st.text('Visualisation Type')
+
+selected_option3 = st.sidebar.selectbox("Select Plot:", ["bar","line","hist"])
 selected_option1 = st.sidebar.selectbox("x",options)
 selected_option2 = st.sidebar.selectbox("y",options)
-selected_option3 = st.sidebar.selectbox("Select Plot", ["bar","scatter","hist"])
-submit = st.sidebar.button("Submit")
 
+
+
+submit = st.sidebar.button("Submit")
 if submit:
     main(selected_option1,selected_option2, selected_option3)
